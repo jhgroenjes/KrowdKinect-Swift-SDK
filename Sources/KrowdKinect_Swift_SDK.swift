@@ -45,16 +45,16 @@ public class FullScreenViewController: UIViewController {
     }
     
     private func presentExitConfirmation() {
-        let alertController = UIAlertController(title: "Confirm Exit", message: "Do you really want to exit?", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "Confirm Exit", message: "To exit, Long-press End for 3 seconds", preferredStyle: .alert)
         
         // Cancel Action
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
-        // Exit Action
-        let exitAction = UIAlertAction(title: "Exit\n(Hold for 3 seconds)", style: .destructive, handler: nil)
+        // End Action
+        let exitAction = UIAlertAction(title: "End", style: .destructive, handler: nil)
         
         // Disable the exit button initially
-        exitAction.isEnabled = false
+        //exitAction.isEnabled = false
         
         alertController.addAction(cancelAction)
         alertController.addAction(exitAction)
