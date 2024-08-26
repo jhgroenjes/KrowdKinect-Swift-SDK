@@ -11,6 +11,9 @@ let package = Package(
             name: "KrowdKinect-Swift-SDK",
             targets: ["KrowdKinect-Swift-SDK"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/ably/ably-cocoa.git", from: "1.2.33")
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
