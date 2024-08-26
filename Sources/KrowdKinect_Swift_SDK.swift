@@ -9,14 +9,14 @@
 import SwiftUI
 import UIKit
 
-
 public class FullScreenViewController: UIViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
 
         // Set up SwiftUI view in UIKit container
-        let contentView = ContentView()  // Your existing SwiftUI view
+        let contentView = ContentView()
+            .edgesIgnoringSafeArea(.all)  // Make sure the SwiftUI view ignores safe areas
         let hostingController = UIHostingController(rootView: contentView)
         
         // Add the hosting controller as a child view controller
@@ -45,41 +45,22 @@ public class FullScreenViewController: UIViewController {
     }
     
     private func presentExitConfirmation() {
-        let alertController = UIAlertController(title: "Confirm Exit", message: "To exit, Long-press End for 3 seconds", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "Confirm Exit", message: "Do you really want to exit?", preferredStyle: .alert)
         
         // Cancel Action
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
         // End Action
-        let exitAction = UIAlertAction(title: "End", style: .destructive, handler: nil)
-        
-        // Disable the exit button initially
-        //exitAction.isEnabled = false
+        let exitAction = UIAlertAction(title: "End", style: .destructive) { _ in
+            self.dismiss(animated: true, completion: nil)
+        }
         
         alertController.addAction(cancelAction)
         alertController.addAction(exitAction)
         
-        present(alertController, animated: true) {
-            // Add the long press gesture recognizer to the exit button
-            if let exitButton = alertController.view.subviews.first?.subviews.first?.subviews.first?.subviews.first?.subviews.first?.subviews.last {
-                let longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.handleLongPress(_:)))
-                longPress.minimumPressDuration = 3.0 // 3 seconds press required
-                exitButton.addGestureRecognizer(longPress)
-                exitButton.isUserInteractionEnabled = true
-            }
-        }
-    }
-    
-    @objc private func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-        if gesture.state == .began {
-            // User started pressing the Exit button
-        } else if gesture.state == .ended {
-            // User successfully held the Exit button for the required time
-            self.dismiss(animated: true, completion: nil)
-        }
+        present(alertController, animated: true, completion: nil)
     }
 }
-
 
 
 public class KrowdKinectSDK {
