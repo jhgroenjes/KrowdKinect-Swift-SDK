@@ -9,6 +9,7 @@
 import SwiftUI
 import UIKit
 
+
 public class FullScreenViewController: UIViewController {
     
     override public func viewDidLoad() {
