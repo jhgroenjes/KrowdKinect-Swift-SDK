@@ -9,27 +9,38 @@
 import SwiftUI
 import UIKit
 
-public class FullScreenViewController: UIViewController {
+
+public class FullScreenViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
 
         // Set up SwiftUI view in UIKit container
         let contentView = ContentView()
-            .edgesIgnoringSafeArea(.all)  // Make sure the SwiftUI view ignores safe areas
+            .edgesIgnoringSafeArea(.all)  // Ensure the SwiftUI view ignores safe areas
         let hostingController = UIHostingController(rootView: contentView)
         
         // Add the hosting controller as a child view controller
         addChild(hostingController)
         view.addSubview(hostingController.view)
-        hostingController.view.frame = view.bounds
-        hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         hostingController.didMove(toParent: self)
+        
+        // Apply constraints to make the hostingController view fill the entire screen
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
 
         // Add the triple-tap gesture recognizer
         let tripleTap = UITapGestureRecognizer(target: self, action: #selector(tripleTapped))
         tripleTap.numberOfTapsRequired = 3
         view.addGestureRecognizer(tripleTap)
+        
+        // Set the presentation controller delegate
+        self.presentationController?.delegate = self
     }
     
     override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -60,7 +71,13 @@ public class FullScreenViewController: UIViewController {
         
         present(alertController, animated: true, completion: nil)
     }
+    
+    // Disable the down-swipe gesture to dismiss the view
+    public func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
+        return false
+    }
 }
+
 
 
 public class KrowdKinectSDK {
