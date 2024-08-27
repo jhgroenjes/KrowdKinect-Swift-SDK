@@ -50,8 +50,8 @@ class WebSocketController: ObservableObject {
     let homeAwayChoices = ["All", "Home", "Away"]
     @Published var homeAwaySelection = "All"
     @Published var homeAwaySent = "All"
-    var displayName = "KrowdKinect "
-    var displayTagline = "Be the show"
+    var displayName = "White Label "
+    var displayTagline = "Triple-tap to exit"
     var appVersion = "Ver. 0.3.1"
     var pixelArrayBytes = 18  // number of 16-bit values in this array
     var featuresArrayBytes = 14  // number of 8-bit values in this array
