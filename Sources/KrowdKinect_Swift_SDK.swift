@@ -11,6 +11,7 @@ import UIKit
 
 
 public class FullScreenViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
+    @StateObject var session = WebSocketController()
     
     override public func viewDidLoad() {
         super.viewDidLoad()
@@ -61,9 +62,11 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
         // Cancel Action
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
-        // End Action
-        let exitAction = UIAlertAction(title: "End", style: .destructive) { _ in
+        // Exit Action
+        let exitAction = UIAlertAction(title: "Exit", style: .destructive) { _ in
             self.dismiss(animated: true, completion: nil)
+            self.session.ably.connection.close()
+            print ("Ably connection closed")
         }
         
         alertController.addAction(cancelAction)

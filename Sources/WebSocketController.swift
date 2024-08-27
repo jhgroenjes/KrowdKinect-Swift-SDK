@@ -10,7 +10,7 @@ import AVFoundation
 import Ably
 
 
-class WebSocketController: ObservableObject {
+public class WebSocketController: ObservableObject {
     //  ***********  Vars in the pixelArray (9, 16-bit Values)  ************ //
     var seed : UInt16 = 1
     var masterRows : UInt16 = 0
@@ -50,8 +50,6 @@ class WebSocketController: ObservableObject {
     let homeAwayChoices = ["All", "Home", "Away"]
     @Published var homeAwaySelection = "All"
     @Published var homeAwaySent = "All"
-    var displayName = "White Label "
-    var displayTagline = "Triple-tap to exit"
     var appVersion = "Ver. 0.3.1"
     var pixelArrayBytes = 18  // number of 16-bit values in this array
     var featuresArrayBytes = 14  // number of 8-bit values in this array
@@ -61,11 +59,17 @@ class WebSocketController: ObservableObject {
     @Published public var online : Bool = false   //initialize to False until Ably confirms connection
     var audioPlayer: AVAudioPlayer?
     @Published public var textIsHidden = false  // state for error text to display when Ably-disconnected
-    let ably = ARTRealtime(key: "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk") //Receive Only Ably Key
     var timerBright: Timer?
     var timerColor: Timer?
     var timerCandle: Timer?
-
+    
+    //Set from Host App:  NOT IMPLEMENTED YET  8-26-2024  just getting vars set up
+    @Published public var ably = ARTRealtime(key: "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk") //Receive Only Ably Key
+    @Published public var displayName = "White Label "
+    @Published public var displayTagline = "Triple-tap to exit"
+    @Published public var homeAwayHide = false
+    
+    
     // ********************** Setting  up  the  Arrays  *********************//
     var pixelArray : [UInt16] = []
     @Published var featuresArray: [UInt8] = Array(repeating: 0, count: 14)  // initialize all 14 entries to 0
