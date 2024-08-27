@@ -301,38 +301,37 @@ class WebSocketController: ObservableObject {
                             173: ("Wind", 1.0),
                             174: ("metronome", 1.0)
                         ]
+                        
                         func playSound(for feature: UInt8) {
                             if let sound = soundMapping[feature] {
                                 let fileExtension = sound.0.contains(".m4a") ? "m4a" : "mp3"
                                 let fileName = sound.0.replacingOccurrences(of: ".\(fileExtension)", with: "")
-                                //let url = Bundle.main.url(forResource: "Sounds/\(fileName)", withExtension: fileExtension)
                                 let podBundle = Bundle(for: WebSocketController.self)
-                                let url = podBundle.url(forResource: fileName, withExtension: fileExtension)
-                                print ("Playing audio file at: \(String(describing: url))")
-                                do {
-                                    // check to see if this audio playback was to be 5-second sync playback
-                                    if self.featuresArray[10] == 255 {
-                                        playAudioWhenSecondsDivisibleBy5(audioURL: url!)
-                                    } else {
-                                        self.audioPlayer = try AVAudioPlayer(contentsOf: url!)
-                                        self.audioPlayer!.setVolume(sound.1, fadeDuration: 1.0)
-                                        audioQueue.async {
-                                        self.audioPlayer!.play()
-                                            
-                                            
-                                         
-                                            
-                                            
+                                if let url = podBundle.url(forResource: fileName, withExtension: fileExtension) {
+                                    print("Playing audio file at: \(url)")
+                                    do {
+                                        // check to see if this audio playback was to be 5-second sync playback
+                                        if self.featuresArray[10] == 255 {
+                                            playAudioWhenSecondsDivisibleBy5(audioURL: url)
+                                        } else {
+                                            self.audioPlayer = try AVAudioPlayer(contentsOf: url)
+                                            self.audioPlayer!.setVolume(sound.1, fadeDuration: 1.0)
+                                            audioQueue.async {
+                                                self.audioPlayer!.play()
+                                            }
                                         }
-                                    } // end else
-                                } catch {
-                                    print("audio player couldn't play")
+                                    } catch {
+                                        print("audio player couldn't play: \(error)")
+                                    }
+                                } else {
+                                    print("Audio file \(fileName).\(fileExtension) not found in bundle.")
                                 }
                             } else if feature == 254 {
                                 self.audioPlayer?.stop()
                             }
                             self.featuresArray[6] = 0
-                        }
+                        } // end func playSound
+                        
                         playSound(for: self.featuresArray[6])
                     } // end if featuresArray[6] != 0 check
 
