@@ -13,6 +13,7 @@ Pod::Spec.new do |s|
   s.documentation_url       = "https://www.krowdkinect.com"
   s.swift_version           = '5.0'
   s.source_files = "Sources/**/*.{swift}"
+  s.resources    = ["Sounds/*.mp3"]  # Include all .mp3 files in the Sounds folder
   s.requires_arc = true
   s.dependency 'Ably', '~> 1.2.33'
 end
