@@ -68,6 +68,7 @@ public class WebSocketController: ObservableObject {
     @Published public var displayName = "White Label "
     @Published public var displayTagline = "Triple-tap to exit"
     @Published public var homeAwayHide = false
+    var ablyConnectionState = true  //  set the state var up so that when host app closes, the public class doesn't re-init the conneciton
     
     
     // ********************** Setting  up  the  Arrays  *********************//
@@ -78,20 +79,22 @@ public class WebSocketController: ObservableObject {
 
 
     init() {
-        // Monitor state of Ably connection
-        ably.connection.on { stateChange in
-            let stateChange = stateChange
-            switch stateChange.current {
-            case .connected:
-                self.online = true
-                print("Connected to Ably!")
-            case .failed:
-                print("Failed to connect to Ably!")
-            default:
-                break
-            }
-        } // end ably.connection.on
-
+        
+        if ablyConnectionState == true {
+            // Monitor state of Ably connection
+            ably.connection.on { stateChange in
+                let stateChange = stateChange
+                switch stateChange.current {
+                case .connected:
+                    self.online = true
+                    print("Connected to Ably!")
+                case .failed:
+                    print("Failed to connect to Ably!")
+                default:
+                    break
+                }
+            } // end ably.connection.on
+        }
 
         // Set the screen brightness to 100% on app launch and disable app timer
         UIScreen.main.brightness = 1

@@ -66,6 +66,7 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
         let exitAction = UIAlertAction(title: "Exit", style: .destructive) { _ in
             self.dismiss(animated: true, completion: nil)
             self.session.ably.connection.close()
+            self.session.ablyConnectionState = false
             print ("Ably connection closed")
         }
         
