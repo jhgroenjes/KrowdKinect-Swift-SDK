@@ -85,5 +85,7 @@ public class KrowdKinectSDK {
     public static func presentFullScreen(from viewController: UIViewController) {
         let fullScreenVC = FullScreenViewController()
         viewController.present(fullScreenVC, animated: true, completion: nil)
+            .ignoresSafeArea (.all)
+            
     }
 }
