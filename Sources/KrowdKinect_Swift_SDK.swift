@@ -86,7 +86,5 @@ public class KrowdKinectSDK {
         let fullScreenVC = FullScreenViewController()
         fullScreenVC.modalPresentationStyle = .fullScreen  // Ensure full-screen presentation
         viewController.present(fullScreenVC, animated: true, completion: nil)
-            .ignoresSafeArea (.all)
-            
     }
 }
