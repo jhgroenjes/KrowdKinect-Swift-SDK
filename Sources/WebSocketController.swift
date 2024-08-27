@@ -305,7 +305,9 @@ class WebSocketController: ObservableObject {
                             if let sound = soundMapping[feature] {
                                 let fileExtension = sound.0.contains(".m4a") ? "m4a" : "mp3"
                                 let fileName = sound.0.replacingOccurrences(of: ".\(fileExtension)", with: "")
-                                let url = Bundle.main.url(forResource: "Sounds/\(fileName)", withExtension: fileExtension)
+                                //let url = Bundle.main.url(forResource: "Sounds/\(fileName)", withExtension: fileExtension)
+                                let podBundle = Bundle(for: WebSocketController.self)
+                                let url = podBundle.url(forResource: fileName, withExtension: fileExtension)
                                 print ("Playing audio file at: \(String(describing: url))")
                                 do {
                                     // check to see if this audio playback was to be 5-second sync playback
