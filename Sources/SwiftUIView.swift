@@ -1,6 +1,6 @@
 //
 //  SwiftUIView.swift
-//  
+//
 //
 //  Created by Jason Groenjes on 8/25/24.
 //
@@ -44,7 +44,7 @@ struct ContentView: View {
                             Text("Seat")
                                 .padding(.top, 47)
                                 .foregroundColor(session.viewablecolor)
-
+                            
                             TextField("Seat", text: $seatNumber)
                                 .padding(.top, 45)
                                 .frame(width: 80)
@@ -57,6 +57,7 @@ struct ContentView: View {
                                         session.deviceID = number
                                     }
                                 }
+                            
                                 .onAppear {
                                     // Ensure seatNumber and session.deviceID are in sync at launch
                                     if session.deviceID == 0 {
@@ -76,7 +77,7 @@ struct ContentView: View {
                                         Button("Done") {
                                             isFocused = false // Dismiss the keyboard
                                             if let number = UInt32(seatNumber.replacingOccurrences(of: ",", with: "")) {
-                                            session.deviceID = number
+                                                session.deviceID = number
                                             } else {
                                                 seatNumber = "1"
                                                 session.deviceID = 1
@@ -84,21 +85,26 @@ struct ContentView: View {
                                         }
                                     }
                                 } // end .toolbar
+                               
                         } // end HStack
+                       
                     } // end button action
+                    
+                    
                     Spacer()
-                    Picker("HomeAwayZone", selection: $homeAwaySelectionVar) {
-                        ForEach(session.homeAwayChoices, id: \.self) {
-                            Text($0)
-                                .foregroundColor(session.viewablecolor)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    } // end Picker
-                    .foregroundColor(session.viewablecolor)
-                    .padding(.top, 47)
-                    .frame(width: 110.0)
-                    .onChange(of: homeAwaySelectionVar) { newZone in
-                        switch newZone {
+                    if session.homeAwayHide == true {
+                        Picker("HomeAwayZone", selection: $homeAwaySelectionVar) {
+                            ForEach(session.homeAwayChoices, id: \.self) {
+                                Text($0)
+                                    .foregroundColor(session.viewablecolor)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                        } // end Picker
+                        .foregroundColor(session.viewablecolor)
+                        .padding(.top, 47)
+                        .frame(width: 110.0)
+                        .onChange(of: homeAwaySelectionVar) { newZone in
+                            switch newZone {
                             case "All":
                                 session.homeAwaySelection = "All"
                             case "Home":
@@ -107,17 +113,19 @@ struct ContentView: View {
                                 session.homeAwaySelection = "Away"
                             default:
                                 session.homeAwaySelection = "All"
+                            }
                         }
+                        Text("Zone")
+                            .foregroundColor(session.viewablecolor)
+                            .padding(.top, 47)
+                            .frame(width: 45)
                     }
-                    Text("Zone")
-                        .foregroundColor(session.viewablecolor)
-                        .padding(.top, 47)
-                        .frame(width: 45)
+                } // end if check on homeAwayHide
+                    Spacer()
                 }
-                Spacer()
-            }
-            .padding(.leading, 10)
-            .padding(.trailing, 15)
+                .padding(.leading, 10)
+                .padding(.trailing, 15)
+        
             VStack {
                 Spacer()
                 Text(session.displayName)
@@ -144,5 +152,7 @@ struct ContentView: View {
         //.background(Color.init(UIColor(red: session.red, green: session.green, blue: session.blue, alpha: 1.0))).ignoresSafeArea(.all, edges:.all)
         .background(Color(red: session.red, green: session.green, blue: session.blue)).ignoresSafeArea(.all, edges:.all)
     } // end view
+    
 } // end struct
+
 

@@ -18,7 +18,7 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
 
         // Set up SwiftUI view in UIKit container
         let contentView = ContentView()
-            .edgesIgnoringSafeArea(.all)  // Ensure the SwiftUI view ignores safe areas
+           // .edgesIgnoringSafeArea(.all)  // Ensure the SwiftUI view ignores safe areas
         let hostingController = UIHostingController(rootView: contentView)
         
         // Add the hosting controller as a child view controller
@@ -66,7 +66,6 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
         let exitAction = UIAlertAction(title: "Exit", style: .destructive) { _ in
             self.dismiss(animated: true, completion: nil)
             self.session.ably.connection.close()
-            self.session.ablyConnectionState = false
             print ("Ably connection closed")
         }
         
