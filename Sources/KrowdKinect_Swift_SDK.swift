@@ -1,5 +1,3 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
 
 // Swift SDK for KrowdKinect
 //  Jason Groenjes   All rights reserved.     August 2024.
@@ -13,12 +11,12 @@ import UIKit
 public class FullScreenViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
     @StateObject var session = WebSocketController()
     
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
 
         // Set up SwiftUI view in UIKit container
         let contentView = ContentView()
-           // .edgesIgnoringSafeArea(.all)  // Ensure the SwiftUI view ignores safe areas
         let hostingController = UIHostingController(rootView: contentView)
         
         // Add the hosting controller as a child view controller
@@ -65,8 +63,8 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
         // Exit Action
         let exitAction = UIAlertAction(title: "Exit", style: .destructive) { _ in
             self.dismiss(animated: true, completion: nil)
-            self.session.ably.connection.close()
-            print ("Ably connection closed")
+            //self.session.disconnectFromAbly()
+            //print ("Ably connection closed via Exit button action")
         }
         
         alertController.addAction(cancelAction)
@@ -85,9 +83,10 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
 
 public class KrowdKinectSDK {
     
-    public static func presentFullScreen(from viewController: UIViewController) {
+    public static func launch(from viewController: UIViewController) {
         let fullScreenVC = FullScreenViewController()
         fullScreenVC.modalPresentationStyle = .fullScreen  // Ensure full-screen presentation
         viewController.present(fullScreenVC, animated: true, completion: nil)
     }
 }
+

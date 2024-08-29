@@ -41,50 +41,56 @@ struct ContentView: View {
                         isFocused = true
                     }) {
                         HStack {
-                            Text("Seat")
-                                .padding(.top, 47)
-                                .foregroundColor(session.viewablecolor)
-                            
-                            TextField("Seat", text: $seatNumber)
-                                .padding(.top, 45)
-                                .frame(width: 80)
-                                .focused($isFocused)
-                                .foregroundColor(session.viewablecolor)
-                                .font(.system(size: 23))
-                                .keyboardType(.numberPad)
-                                .onChange(of: seatNumber) { newValue in
-                                    if let number = UInt32(newValue) {
-                                        session.deviceID = number
+                            if session.seatNumberHide == false {
+                                Text("Seat")
+                                    .padding(.top, 47)
+                                    .foregroundColor(session.viewablecolor)
+                                
+                                TextField("Seat", text: $seatNumber)
+                                    .padding(.top, 45)
+                                    .frame(width: 80)
+                                    .focused($isFocused)
+                                    .foregroundColor(session.viewablecolor)
+                                    .font(.system(size: 23))
+                                    .keyboardType(.numberPad)
+                                    .onTapGesture {
+                                        
                                     }
-                                }
-                            
-                                .onAppear {
-                                    // Ensure seatNumber and session.deviceID are in sync at launch
-                                    if session.deviceID == 0 {
-                                        session.deviceID = 1
-                                        seatNumber = "1"
-                                    } else {
-                                        seatNumber = String(session.deviceID)
-                                    }
-                                }
-                                .toolbar {
-                                    ToolbarItemGroup(placement: .keyboard) {
-                                        Button("Clear All") {
-                                            seatNumber = ""
-                                            session.deviceID = 0 // Resetting to 0 or any default value
+                                    .onChange(of: seatNumber) { newValue in
+                                        if let number = UInt32(newValue) {
+                                            session.deviceID = number
                                         }
-                                        Spacer() // To push the "Done" button to the right
-                                        Button("Done") {
-                                            isFocused = false // Dismiss the keyboard
-                                            if let number = UInt32(seatNumber.replacingOccurrences(of: ",", with: "")) {
-                                                session.deviceID = number
-                                            } else {
-                                                seatNumber = "1"
-                                                session.deviceID = 1
+                                    }
+                                
+                                    .onAppear {
+                                        
+                                        // Ensure seatNumber and session.deviceID are in sync at launch
+                                        if session.deviceID == 0 {
+                                            session.deviceID = 1
+                                            seatNumber = "1"
+                                        } else {
+                                            seatNumber = String(session.deviceID)
+                                        }
+                                    }
+                                    .toolbar {
+                                        ToolbarItemGroup(placement: .keyboard) {
+                                            Button("Clear All") {
+                                                seatNumber = ""
+                                                session.deviceID = 0 // Resetting to 0 or any default value
+                                            }
+                                            Spacer() // To push the "Done" button to the right
+                                            Button("Done") {
+                                                isFocused = false // Dismiss the keyboard
+                                                if let number = UInt32(seatNumber.replacingOccurrences(of: ",", with: "")) {
+                                                    session.deviceID = number
+                                                } else {
+                                                    seatNumber = "1"
+                                                    session.deviceID = 1
+                                                }
                                             }
                                         }
-                                    }
-                                } // end .toolbar
+                                    } // end .toolbar
+                            } // end if seatNumberHide
                                
                         } // end HStack
                        
@@ -92,7 +98,7 @@ struct ContentView: View {
                     
                     
                     Spacer()
-                    if session.homeAwayHide == true {
+                    if session.homeAwayHide == false {
                         Picker("HomeAwayZone", selection: $homeAwaySelectionVar) {
                             ForEach(session.homeAwayChoices, id: \.self) {
                                 Text($0)
@@ -135,7 +141,7 @@ struct ContentView: View {
                 Text(session.displayTagline)
                     .foregroundColor(session.viewablecolor)
                     .opacity(0.7)
-                Text("Offine! - try reloading app")
+                Text("Offine! Triple tap to exit and reload.")
                     .foregroundColor(.red)
                     .font(.system(size: 20).bold())
                     .opacity(session.textIsHidden ? 1 : 0)
@@ -151,8 +157,12 @@ struct ContentView: View {
         .frame(maxWidth: .infinity)
         //.background(Color.init(UIColor(red: session.red, green: session.green, blue: session.blue, alpha: 1.0))).ignoresSafeArea(.all, edges:.all)
         .background(Color(red: session.red, green: session.green, blue: session.blue)).ignoresSafeArea(.all, edges:.all)
+        .onDisappear {
+            session.disconnectFromAbly()
+        }
     } // end view
     
 } // end struct
+
 
 

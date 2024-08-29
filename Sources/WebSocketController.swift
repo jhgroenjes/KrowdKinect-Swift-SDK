@@ -45,7 +45,7 @@ public class WebSocketController: ObservableObject {
     @Published public var red : CGFloat = 0.0
     @Published public var green : CGFloat = 0.0
     @Published public var blue : CGFloat = 0.0
-    @Published public var deviceID : UInt32 = 1 // unique device #. (1...70,000+)
+    
     var vDevID : UInt32 = 0  // this is the deviceID used when this device is told to be part of the Screen (not surface)
     let homeAwayChoices = ["All", "Home", "Away"]
     @Published var homeAwaySelection = "All"
@@ -63,13 +63,18 @@ public class WebSocketController: ObservableObject {
     var timerColor: Timer?
     var timerCandle: Timer?
     private var channel: ARTRealtimeChannel?
+    public var ably : ARTRealtime?
     
     //Set from Host App:  NOT IMPLEMENTED YET  8-26-2024  just getting vars set up
-    @Published public var ably = ARTRealtime(key: "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk") //Receive Only Ably Key
+   
+    // @Published public var ably = ARTRealtime(key: "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk") //Receive Only Ably Key
+    
     @Published public var apiKey = "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk"
-    @Published public var displayName = "White Label "
+    @Published public var deviceID : UInt32 = 1 // unique device #. (1...70,000+)
+    @Published public var displayName = "White Label"
     @Published public var displayTagline = "Triple-tap to exit"
     @Published public var homeAwayHide = false
+    @Published public var seatNumberHide = true
 
     
     // ********************** Setting  up  the  Arrays  *********************//
@@ -81,26 +86,60 @@ public class WebSocketController: ObservableObject {
 
     init() {
         setupScreenBrightness()
+        //setupReceiveHandler()
+        setAPIKey(apiKey)
         
-            // Monitor state of Ably connection
-            ably.connection.on { stateChange in
-                let stateChange = stateChange
-                switch stateChange.current {
-                case .connected:
-                    self.online = true
-                    print("Connected to Ably!")
-                case .failed:
-                    print("Failed to connect to Ably!")
-                default:
-                    break
-                }
-            } // end ably.connection.on
-        
-
-        setupReceiveHandler()
-     
    }  // end init()
     
+    func setAPIKey(_ key: String) {
+          self.ably = ARTRealtime(key: key)
+          connectToAbly()
+      }
+    
+    func connectToAbly() {
+        guard let ably = ably, channel == nil else {
+            print ("Already connected to Ably")
+            // Already connected or ably is not set
+            return
+        }
+        print ("connecitng to Websockets server")
+        ably.connection.on { [weak self] stateChange in
+            guard let self = self else { return }
+            switch stateChange.current {
+            case .connected:
+                self.online = true
+                print("Connected to Ably!")
+            case .failed:
+                print("Failed to connect to Ably!")
+            default:
+                break
+            }
+            setupReceiveHandler()
+        }
+    }
+
+    func disconnectFromAbly() {
+          channel?.unsubscribe()
+          ably?.connection.close()
+          channel = nil
+          online = false
+          print("Disconnected from Ably via Master func.")
+    }
+    
+
+    deinit {
+        disconnectFromAbly()
+    }
+    
+    
+   // func viewWillAppear() {
+   //     connectToAbly()
+   // }
+
+    func viewWillDisappear() {
+        print("view will Disappear executed")
+        disconnectFromAbly()
+    }
     
     
     func setupScreenBrightness() {
@@ -110,7 +149,7 @@ public class WebSocketController: ObservableObject {
     
     func setupReceiveHandler() {
         //  Connect to the WebSockets Server
-        let channel = ably.channels.get("KrowdKinect")
+        let channel = ably!.channels.get("KrowdKinect")
         channel.subscribe("kkdata") { message in
             self.handleIncomingMessage(message)
         }
@@ -595,8 +634,7 @@ public class WebSocketController: ObservableObject {
                     //------  See if Force-Close-Ably was sent  ----------
                     //----------------------------------------------------
                     if self.featuresArray[13] == 255 {  //  255 is force close websocket connection
-                        channel!.unsubscribe()
-                        self.ably.connection.close()
+                        self.disconnectFromAbly()
                         self.textIsHidden.toggle()
                         print ("Received Command to disconnect from ably - mode 255")
                     } // end if
@@ -732,6 +770,7 @@ public class WebSocketController: ObservableObject {
     
 
 } //end CLASS
+
 
 
 
