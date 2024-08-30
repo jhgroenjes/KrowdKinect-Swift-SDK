@@ -9,6 +9,32 @@ import Combine
 import AVFoundation
 import Ably
 
+// setting up the struct that will contain all the var's that the Host app can update
+public struct kkOptions {
+    public var apiKey: String?
+    public var deviceID: UInt32
+    public var displayName: String = "Default Name"
+    public var displayTagline: String = "Default Tagline"
+    public var homeAwayHide: Bool = false
+    public var seatNumberEditHide: Bool = false
+    
+    public init(apiKey: String? = nil,
+                deviceID: UInt32 = 5,
+                displayName: String = "Default Name",
+                displayTagline: String = "Default Tagline",
+                homeAwayHide: Bool = false,
+                seatNumberEditHide: Bool = false) {
+        self.apiKey = apiKey
+        self.deviceID = deviceID
+        self.displayName = displayName
+        self.displayTagline = displayTagline
+        self.homeAwayHide = homeAwayHide
+        self.seatNumberEditHide = seatNumberEditHide
+    }
+}
+
+
+
 
 public class WebSocketController: ObservableObject {
     //  ***********  Vars in the pixelArray (9, 16-bit Values)  ************ //
@@ -69,12 +95,12 @@ public class WebSocketController: ObservableObject {
    
     // @Published public var ably = ARTRealtime(key: "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk") //Receive Only Ably Key
     
-    @Published public var apiKey = "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk"
-    @Published public var deviceID : UInt32 = 1 // unique device #. (1...70,000+)
-    @Published public var displayName = "White Label"
-    @Published public var displayTagline = "Triple-tap to exit"
-    @Published public var homeAwayHide = false
-    @Published public var seatNumberHide = true
+    @Published public var apiKey: String
+    @Published public var deviceID: UInt32
+    @Published public var displayName: String
+    @Published public var displayTagline: String
+    @Published public var homeAwayHide: Bool
+    @Published public var seatNumberEditHide: Bool
 
     
     // ********************** Setting  up  the  Arrays  *********************//
@@ -83,34 +109,50 @@ public class WebSocketController: ObservableObject {
     var colorArray : [[UInt8]] = []
     // **********************************************************************//
 
-
-    init() {
-        setupScreenBrightness()
-        //setupReceiveHandler()
-        setAPIKey(apiKey)
-        
-   }  // end init()
+    
+    
+    public init(options: kkOptions) {
+            self.apiKey = options.apiKey ?? "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk"
+            self.deviceID = options.deviceID
+            self.displayName = options.displayName
+            self.displayTagline = options.displayTagline
+            self.homeAwayHide = options.homeAwayHide
+            self.seatNumberEditHide = options.seatNumberEditHide
+            setupScreenBrightness()
+            //setAPIKey(self.apiKey)  rely on the view load property below to initiate the connection.
+        }
+    
+    // Method to update options if needed after initialization
+       func updateOptions(with options: kkOptions) {
+           self.apiKey = options.apiKey ?? self.apiKey
+           self.deviceID = options.deviceID
+           self.displayName = options.displayName
+           self.displayTagline = options.displayTagline
+           self.homeAwayHide = options.homeAwayHide
+           self.seatNumberEditHide = options.seatNumberEditHide
+       }
+    
     
     func setAPIKey(_ key: String) {
           self.ably = ARTRealtime(key: key)
-          connectToAbly()
       }
     
     func connectToAbly() {
+        setAPIKey(self.apiKey)  // set with the api key passed from the parent
         guard let ably = ably, channel == nil else {
-            print ("Already connected to Ably")
+            print ("Already connected to KrowdKinect Service")
             // Already connected or ably is not set
             return
         }
-        print ("connecitng to Websockets server")
+        //print ("connecitng to Websockets server")
         ably.connection.on { [weak self] stateChange in
             guard let self = self else { return }
             switch stateChange.current {
             case .connected:
                 self.online = true
-                print("Connected to Ably!")
+                print("Connected to KrowdKinect Cloud Services!")
             case .failed:
-                print("Failed to connect to Ably!")
+                print("Failed to connect to KrowdKinect Service!")
             default:
                 break
             }
@@ -131,13 +173,10 @@ public class WebSocketController: ObservableObject {
         disconnectFromAbly()
     }
     
-    
-   // func viewWillAppear() {
-   //     connectToAbly()
-   // }
+   
 
     func viewWillDisappear() {
-        print("view will Disappear executed")
+       // print("view will Disappear executed")
         disconnectFromAbly()
     }
     

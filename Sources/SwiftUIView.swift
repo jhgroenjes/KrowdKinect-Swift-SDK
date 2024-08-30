@@ -8,10 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var session = WebSocketController()
-    @FocusState  var isFocused
-    @State var homeAwaySelectionVar : String = "All"
-    @State private var seatNumber: String = "1"
+    @StateObject var session: WebSocketController  // Initialize here
+        @FocusState var isFocused
+        @State var homeAwaySelectionVar: String = "All"
+        @State private var seatNumber: String = "1"
+
+        init(options: kkOptions) {
+            _session = StateObject(wrappedValue: WebSocketController(options: options))
+        }
 
     let formatter: NumberFormatter = {
            let formatter = NumberFormatter()
@@ -37,11 +41,12 @@ struct ContentView: View {
                             .font(.system(size:42).bold())
                     }
                     // outter button gives user ability to click on the title or the number
+                    if session.seatNumberEditHide == false {
                     Button(action: {
                         isFocused = true
                     }) {
                         HStack {
-                            if session.seatNumberHide == false {
+                          
                                 Text("Seat")
                                     .padding(.top, 47)
                                     .foregroundColor(session.viewablecolor)
@@ -90,12 +95,17 @@ struct ContentView: View {
                                             }
                                         }
                                     } // end .toolbar
-                            } // end if seatNumberHide
+                           
                                
                         } // end HStack
                        
                     } // end button action
-                    
+                    } else {
+                        Text("Seat  \(session.deviceID)")
+                            .padding(.top, 47)
+                            .foregroundColor(session.viewablecolor)
+                        
+                    } // end if seatNumberHide
                     
                     Spacer()
                     if session.homeAwayHide == false {
@@ -159,6 +169,10 @@ struct ContentView: View {
         .background(Color(red: session.red, green: session.green, blue: session.blue)).ignoresSafeArea(.all, edges:.all)
         .onDisappear {
             session.disconnectFromAbly()
+        }
+        .onAppear {
+            // This starts the connection as soon as the sdk view loads.
+            session.connectToAbly()
         }
     } // end view
     

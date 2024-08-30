@@ -9,22 +9,28 @@ import UIKit
 
 
 public class FullScreenViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
-    @StateObject var session = WebSocketController()
+    var options: kkOptions?
     
+    public init(options: kkOptions) {
+        self.options = options
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-
-        // Set up SwiftUI view in UIKit container
-        let contentView = ContentView()
+        
+        guard let options = self.options else { return }
+        let contentView = ContentView(options: options)  // Pass host app options to ContentView
         let hostingController = UIHostingController(rootView: contentView)
         
-        // Add the hosting controller as a child view controller
         addChild(hostingController)
         view.addSubview(hostingController.view)
         hostingController.didMove(toParent: self)
         
-        // Apply constraints to make the hostingController view fill the entire screen
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
@@ -82,11 +88,13 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
 
 
 public class KrowdKinectSDK {
-    
-    public static func launch(from viewController: UIViewController) {
-        let fullScreenVC = FullScreenViewController()
-        fullScreenVC.modalPresentationStyle = .fullScreen  // Ensure full-screen presentation
+   
+    public static func launch(from viewController: UIViewController, with options: kkOptions) {
+        let fullScreenVC = FullScreenViewController(options: options)
+        fullScreenVC.modalPresentationStyle = .fullScreen
         viewController.present(fullScreenVC, animated: true, completion: nil)
     }
 }
+
+
 
