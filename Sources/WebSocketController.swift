@@ -35,7 +35,7 @@ public struct kkOptions {
 
 
 
-
+// CUT-PASTE from KrowdKinect start 1 ############################################################
 public class WebSocketController: ObservableObject {
     //  ***********  Vars in the pixelArray (9, 16-bit Values)  ************ //
     var seed : UInt16 = 1
@@ -56,7 +56,6 @@ public class WebSocketController: ObservableObject {
     @Published public var torchBrightness : CGFloat = 1.0
     var flashlightStatus : UInt8 = 0  // 1=Off, 2=On, 3=Strobe 1x, 4=Strobe 2x, ... 27=Strobe 25x
     var white2Flash : UInt8 = 0 //  0..254=Off, 255=On
-    // var audioPlayback : UInt8 = 0 //  0=None/Stop, 1..254 see protocol documentation  (This var parses out directly below)
     var motionTrigger : UInt8 = 0   //  0=disable, 1..255 see protocol documentation
     @Published var homeAwayZone : UInt8 = 0   //  0 = both (ignores this setting)  1 = Home Devices Only   2 = Away Devcies Only
     var randomClientStrobe : UInt8 = 0   //  0..254=Off,  255=On (flash)
@@ -67,7 +66,6 @@ public class WebSocketController: ObservableObject {
     //  ******************************************************************** //
 
     // additional vars used by client, but not sent in packets from the first 32 bytes
-    @Published public var doneExecuting = false
     @Published public var red : CGFloat = 0.0
     @Published public var green : CGFloat = 0.0
     @Published public var blue : CGFloat = 0.0
@@ -76,7 +74,7 @@ public class WebSocketController: ObservableObject {
     let homeAwayChoices = ["All", "Home", "Away"]
     @Published var homeAwaySelection = "All"
     @Published var homeAwaySent = "All"
-    var appVersion = "Ver. 0.3.1"
+    var appVersion = "Ver. 0.3.2"
     var pixelArrayBytes = 18  // number of 16-bit values in this array
     var featuresArrayBytes = 14  // number of 8-bit values in this array
     var screenPixel : Bool = false  // tells the device if it is screen or surface
@@ -88,13 +86,14 @@ public class WebSocketController: ObservableObject {
     var timerBright: Timer?
     var timerColor: Timer?
     var timerCandle: Timer?
+
+    // ********************** Setting  up  the  Arrays  *********************//
+    var pixelArray : [UInt16] = []
+    @Published var featuresArray: [UInt8] = Array(repeating: 0, count: 14)  // initialize all 14 entries to 0
+    var colorArray : [[UInt8]] = []
+    // **********************************************************************//
     private var channel: ARTRealtimeChannel?
     public var ably : ARTRealtime?
-    
-    //Set from Host App:  NOT IMPLEMENTED YET  8-26-2024  just getting vars set up
-   
-    // @Published public var ably = ARTRealtime(key: "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk") //Receive Only Ably Key
-    
     @Published public var apiKey: String
     @Published public var deviceID: UInt32
     @Published public var displayName: String
@@ -102,15 +101,13 @@ public class WebSocketController: ObservableObject {
     @Published public var homeAwayHide: Bool
     @Published public var seatNumberEditHide: Bool
 
-    
-    // ********************** Setting  up  the  Arrays  *********************//
-    var pixelArray : [UInt16] = []
-    @Published var featuresArray: [UInt8] = Array(repeating: 0, count: 14)  // initialize all 14 entries to 0
-    var colorArray : [[UInt8]] = []
-    // **********************************************************************//
+// CUT-PASTE from KrowdKinect End 1 #############################################################
 
     
-    
+//  #############################################################################################
+//  #################  Code Unique to the SDK - done differently in KrowdKinect iOS Start #######
+//  #############################################################################################
+
     public init(options: kkOptions) {
             self.apiKey = options.apiKey ?? "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk"
             self.deviceID = options.deviceID
@@ -119,10 +116,9 @@ public class WebSocketController: ObservableObject {
             self.homeAwayHide = options.homeAwayHide
             self.seatNumberEditHide = options.seatNumberEditHide
             setupScreenBrightness()
-            //setAPIKey(self.apiKey)  rely on the view load property below to initiate the connection.
-        }
+        } // end Init
     
-    // Method to update options if needed after initialization
+       // Method to update options if needed after initialization
        func updateOptions(with options: kkOptions) {
            self.apiKey = options.apiKey ?? self.apiKey
            self.deviceID = options.deviceID
@@ -131,12 +127,38 @@ public class WebSocketController: ObservableObject {
            self.homeAwayHide = options.homeAwayHide
            self.seatNumberEditHide = options.seatNumberEditHide
        }
+
+    deinit {
+        disconnectFromAbly()
+    }
     
+    func viewWillDisappear() {
+       // print("view will Disappear executed")
+        disconnectFromAbly()
+    }
     
+//  #############################################################################################
+//  #################  Code Unique to the SDK - done differently in KrowdKinect iOS End #######
+//  #############################################################################################
+
+//  #############################################################################################
+//  #############################################################################################
+//  #############################################################################################
+//   Every function below here should be exactly waht KrowdKinect standalone iOS has too.
+    
+    // Set the screen brightness to 100% on app launch and disable app timer
+    // SAME AS KrowdKinect iOS
+    func setupScreenBrightness() {
+           UIScreen.main.brightness = 1
+           UIApplication.shared.isIdleTimerDisabled = true
+    }
+    
+    // SAME AS KrowdKinect iOS
     func setAPIKey(_ key: String) {
           self.ably = ARTRealtime(key: key)
       }
     
+    // SAME AS KrowdKinect iOS
     func connectToAbly() {
         setAPIKey(self.apiKey)  // set with the api key passed from the parent
         guard let ably = ably, channel == nil else {
@@ -160,6 +182,7 @@ public class WebSocketController: ObservableObject {
         }
     }
 
+    // SAME AS KrowdKinect iOS
     func disconnectFromAbly() {
           channel?.unsubscribe()
           ably?.connection.close()
@@ -168,24 +191,8 @@ public class WebSocketController: ObservableObject {
           print("Disconnected from Ably via Master func.")
     }
     
-
-    deinit {
-        disconnectFromAbly()
-    }
     
-   
-
-    func viewWillDisappear() {
-       // print("view will Disappear executed")
-        disconnectFromAbly()
-    }
-    
-    
-    func setupScreenBrightness() {
-           UIScreen.main.brightness = 1
-           UIApplication.shared.isIdleTimerDisabled = true
-    }
-    
+    // SAME AS KrowdKinect iOS
     func setupReceiveHandler() {
         //  Connect to the WebSockets Server
         let channel = ably!.channels.get("KrowdKinect")
@@ -194,6 +201,7 @@ public class WebSocketController: ObservableObject {
         }
     }
     
+    // SAME AS KrowdKinect iOS
     func handleIncomingMessage(_ message: ARTMessage) {
         // +++++++++ C H E C K  Website Demo packet  ++++++++++++++
         //Let's immediately do a check to see if the "extras" channel tag from ably's websocket message is empty.
@@ -203,7 +211,6 @@ public class WebSocketController: ObservableObject {
             self.red = CGFloat(arc4random_uniform(255)) / 255.0
             self.green = CGFloat(arc4random_uniform(255)) / 255.0
             self.blue = CGFloat(arc4random_uniform(255)) / 255.0
-            self.doneExecuting = true
         } else {
             //set a data variable to the unwrapped binary payload from the WS server
             let data = message.data as! Data
@@ -211,7 +218,7 @@ public class WebSocketController: ObservableObject {
         }
     }
      
-    
+    // SAME AS KrowdKinect iOS
     func processZoneInfo(_ data: Data) {
         //----------------------------------------------------
         //------   Stop any previously-running timers  -------
@@ -263,7 +270,7 @@ public class WebSocketController: ObservableObject {
         }
     } // end func processZoneInfo
                 
-    
+    // SAME AS KrowdKinect iOS
     func continueMessageProcessing(_ data: Data) {
                     //----------------------------------------------------
                     //------   Set Screen/Torch Brightness [3]  ----------
@@ -679,7 +686,7 @@ public class WebSocketController: ObservableObject {
                     } // end if
     } // end func continueMessageProcessing
     
-    
+    // SAME AS KrowdKinect iOS
     func toggleFlashLight(intensity : CGFloat) {
             guard let device = AVCaptureDevice.default(for: AVMediaType.video),
                   device.hasTorch else { return }
@@ -718,7 +725,7 @@ public class WebSocketController: ObservableObject {
             }
     }  //end ToggleFlashLight
 
-
+    // SAME AS KrowdKinect iOS
     func torchIntensity(intensity : CGFloat) {
             guard let device = AVCaptureDevice.default(for: AVMediaType.video),
                   device.hasTorch else { return }
@@ -756,7 +763,7 @@ public class WebSocketController: ObservableObject {
             }
     }  //end func TorchIntensity
 
-
+    // SAME AS KrowdKinect iOS
     func FlashLightOff() {
             guard let device = AVCaptureDevice.default(for: AVMediaType.video),
                   device.hasTorch else { return }
@@ -770,7 +777,7 @@ public class WebSocketController: ObservableObject {
             }
     }  //end FlashlightOff
 
-
+    // SAME AS KrowdKinect iOS
     func FlashLightOn(intensity : CGFloat) {
             guard let device = AVCaptureDevice.default(for: AVMediaType.video),
                   device.hasTorch else { return }
