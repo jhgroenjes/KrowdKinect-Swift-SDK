@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "KrowdKinectSDK"
-  s.version      = "0.3.1"
+  s.version      = "0.3.2"
   s.summary      = "Full-screen Swift SDK for KrowdKinect client functionality."
   s.description  = <<-DESC
                    An SDK that presents all the features of KrowdKinect to any host app. KrowdKinect requires full screen in portrait mode.
@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.homepage     = "http://krowdkinect.com"
   s.license      = { :type => 'Apache 2.0', :file => 'LICENSE' }
   s.author       = { "Jason Groenjes" => "jason@krowdkinect.com" }
-  s.source       = { :git => "https://github.com/jasongroenjes/KrowdKinect-Swift-SDK.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/jhgroenjes/KrowdKinect-Swift-SDK.git", :tag => "#{s.version}" }
   s.platform     = :ios, "16.0"
   s.documentation_url       = "https://www.krowdkinect.com"
   s.swift_version           = '5.0'
