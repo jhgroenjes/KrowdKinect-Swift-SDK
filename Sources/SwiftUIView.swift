@@ -79,10 +79,14 @@ struct ContentView: View {
                                 .foregroundColor(session.viewablecolor)
                                 
                             } // end HStack
+                            .onAppear {
+                                    // Set initial values from session
+                                    seatNumber = String(session.deviceID) // Set seatNumber based on session.deviceID
+                                    homeAwaySelectionVar = session.homeAwaySelection // Set homeAwaySelectionVar based on session.homeAwaySelection
+                                }
                         } // End Button Action Wrapper
                     } // end ifseatNumberEditHide
                     Spacer()
-                    
                     // Zone Selection Picker
                     if session.homeAwayHide == false {
                         Picker("HomeAwayZone", selection: $homeAwaySelectionVar) {
