@@ -21,9 +21,9 @@ public struct kkOptions {
     public init(apiKey: String? = nil,
                 deviceID: UInt32 = 5,
                 displayName: String = "Default Name",
-                displayTagline: String = "Default Tagline",
-                homeAwayHide: Bool = false,
-                seatNumberEditHide: Bool = false) {
+                displayTagline: String = "Triple-Tap to Exit",
+                homeAwayHide: Bool = true,
+                seatNumberEditHide: Bool = true) {
         self.apiKey = apiKey
         self.deviceID = deviceID
         self.displayName = displayName
@@ -32,7 +32,6 @@ public struct kkOptions {
         self.seatNumberEditHide = seatNumberEditHide
     }
 }
-
 
 
 // CUT-PASTE from KrowdKinect start 1 ############################################################
@@ -109,7 +108,7 @@ public class WebSocketController: ObservableObject {
 //  #############################################################################################
 
     public init(options: kkOptions) {
-            self.apiKey = options.apiKey ?? "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk"
+            self.apiKey = options.apiKey ?? "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk"  //Public-use Ably Key for testing
             self.deviceID = options.deviceID
             self.displayName = options.displayName
             self.displayTagline = options.displayTagline
@@ -813,8 +812,6 @@ public class WebSocketController: ObservableObject {
                 assert(false, "error: device flash light \(error)")
             }
     }  //end FlashlightOn
-    
-
 } //end CLASS
 
 
