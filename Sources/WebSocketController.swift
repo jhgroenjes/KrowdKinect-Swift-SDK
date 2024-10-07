@@ -73,7 +73,7 @@ public class WebSocketController: ObservableObject {
     let homeAwayChoices = ["All", "Home", "Away"]
     @Published var homeAwaySelection = "All"
     @Published var homeAwaySent = "All"
-    var appVersion = "Ver. 0.3.2"
+    var appVersion = "Ver. 0.3.3"
     var pixelArrayBytes = 18  // number of 16-bit values in this array
     var featuresArrayBytes = 14  // number of 8-bit values in this array
     var screenPixel : Bool = false  // tells the device if it is screen or surface

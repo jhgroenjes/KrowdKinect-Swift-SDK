@@ -42,61 +42,65 @@ struct ContentView: View {
                     }
                     
                     // Seat Number and Zone Selection
-                    Button(action: {
-                        isFocused = true
-                    }) {
-                        HStack {
-                            Text("Seat")
-                                .frame(width: 40)
-                                .foregroundColor(session.viewablecolor)
-                            FocusableTextField(
-                                text: $seatNumber,
-                                isFirstResponder: $isFocused,
-                                placeholder: "Seat",
-                                keyboardType: .numberPad,
-                                onClear: {
-                                    seatNumber = ""
-                                    session.deviceID = 1
-                                },
-                                onDone: {
-                                    DispatchQueue.main.async {
-                                           isFocused = false
-                                       }
-                                    if let number = UInt32(seatNumber.replacingOccurrences(of: ",", with: "")) {
-                                        session.deviceID = number
-                                        if number == 0 {session.deviceID = 1}
-                                    } else {
-                                        seatNumber = "1"
+                    if session.seatNumberEditHide == false {
+                        Button(action: {
+                            isFocused = true
+                        }) {
+                            HStack {
+                                Text("Seat")
+                                    .frame(width: 40)
+                                    .foregroundColor(session.viewablecolor)
+                                FocusableTextField(
+                                    text: $seatNumber,
+                                    isFirstResponder: $isFocused,
+                                    placeholder: "Seat",
+                                    keyboardType: .numberPad,
+                                    onClear: {
+                                        seatNumber = ""
                                         session.deviceID = 1
-                                    }
-                                },
-                                textColor: UIColor(session.viewablecolor),
-                                font: UIFont.systemFont(ofSize: 23)
-                            )
-                            .frame(width: 80, height: 40, alignment: .top)
-                            .foregroundColor(session.viewablecolor)
-                            
-                        }
-                    }
-                    
+                                    },
+                                    onDone: {
+                                        DispatchQueue.main.async {
+                                            isFocused = false
+                                        }
+                                        if let number = UInt32(seatNumber.replacingOccurrences(of: ",", with: "")) {
+                                            session.deviceID = number
+                                            if number == 0 {session.deviceID = 1}
+                                        } else {
+                                            seatNumber = "1"
+                                            session.deviceID = 1
+                                        }
+                                    },
+                                    textColor: UIColor(session.viewablecolor),
+                                    font: UIFont.systemFont(ofSize: 23)
+                                )
+                                .frame(width: 80, height: 40, alignment: .top)
+                                .foregroundColor(session.viewablecolor)
+                                
+                            } // end HStack
+                        } // End Button Action Wrapper
+                    } // end ifseatNumberEditHide
                     Spacer()
                     
                     // Zone Selection Picker
-                    Picker("HomeAwayZone", selection: $homeAwaySelectionVar) {
-                        ForEach(session.homeAwayChoices, id: \.self) {
-                            Text($0)
-                                .foregroundColor(session.viewablecolor)
+                    if session.homeAwayHide == false {
+                        Picker("HomeAwayZone", selection: $homeAwaySelectionVar) {
+                            ForEach(session.homeAwayChoices, id: \.self) {
+                                Text($0)
+                                    .foregroundColor(session.viewablecolor)
+                            }
                         }
-                    }
-                    .pickerStyle(MenuPickerStyle())
-                    .foregroundColor(session.viewablecolor)
-                    .onChange(of: homeAwaySelectionVar) { newZone in
-                        session.homeAwaySelection = newZone
-                    }
-                    
-                    Text("Zone")
+                        .pickerStyle(MenuPickerStyle())
                         .foregroundColor(session.viewablecolor)
-                }
+                        .onChange(of: homeAwaySelectionVar) { newZone in
+                            session.homeAwaySelection = newZone
+                        }
+                        
+                        Text("Zone")
+                            .foregroundColor(session.viewablecolor)
+                    } // end If homeAwayHide
+                    
+                } // end Stack
                 .padding([.leading, .trailing, .top], 15)
                 
                 Spacer() // Pushes the middle content to the center
@@ -131,7 +135,14 @@ struct ContentView: View {
             }
         } // end ZStack
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    } // end Body View    
+        .onDisappear {
+            session.disconnectFromAbly()
+        }
+        .onAppear {
+            // This starts the connection as soon as the sdk view loads.
+            session.connectToAbly()
+        }
+    } // end Body View
 } // end struct
 
 
