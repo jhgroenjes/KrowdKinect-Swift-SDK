@@ -4,7 +4,7 @@
 //
 //  Created by Jason Groenjes on 8/25/24.
 //
-// Latest:  0.3.3 (10/6/2024)
+// Latest:  0.3.5 (10/7/2024)
 
 import SwiftUI
 
@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var isFocused: Bool = false
     @State var homeAwaySelectionVar: String = "All"
     @State private var seatNumber: String = "1"
+
 
     init(options: kkOptions) {
         _session = StateObject(wrappedValue: WebSocketController(options: options))
@@ -50,7 +51,7 @@ struct ContentView: View {
                                 Text("Seat")
                                     .frame(width: 40)
                                     .foregroundColor(session.viewablecolor)
-                                FocusableTextField(
+                            FocusableTextField(
                                     text: $seatNumber,
                                     isFirstResponder: $isFocused,
                                     placeholder: "Seat",
@@ -114,11 +115,6 @@ struct ContentView: View {
                     Text(session.displayTagline)
                         .foregroundColor(session.viewablecolor)
                         .opacity(0.7)
-                //    if !session.online {
-                //        Text("Offline! - try reloading")
-                //            .foregroundColor(.red)
-                //            .font(.system(size: 20).bold())
-                //    }
                 } // end VStack Middle section
                 
                 Spacer() // Pushes the bottom content to the bottom

@@ -17,19 +17,22 @@ public struct kkOptions {
     public var displayTagline: String = "Default Tagline"
     public var homeAwayHide: Bool = false
     public var seatNumberEditHide: Bool = false
+    public var homeAwaySelection: String = "All"
     
     public init(apiKey: String? = nil,
-                deviceID: UInt32 = 5,
-                displayName: String = "Default Name",
+                deviceID: UInt32 = 1,
+                displayName: String = "",
                 displayTagline: String = "Triple-Tap to Exit",
                 homeAwayHide: Bool = true,
-                seatNumberEditHide: Bool = true) {
+                seatNumberEditHide: Bool = true,
+                homeAwaySelection: String = "All") {
         self.apiKey = apiKey
         self.deviceID = deviceID
         self.displayName = displayName
         self.displayTagline = displayTagline
         self.homeAwayHide = homeAwayHide
         self.seatNumberEditHide = seatNumberEditHide
+        self.homeAwaySelection = homeAwaySelection
     }
 }
 
@@ -68,12 +71,10 @@ public class WebSocketController: ObservableObject {
     @Published public var red : CGFloat = 0.0
     @Published public var green : CGFloat = 0.0
     @Published public var blue : CGFloat = 0.0
-    
     var vDevID : UInt32 = 0  // this is the deviceID used when this device is told to be part of the Screen (not surface)
     let homeAwayChoices = ["All", "Home", "Away"]
-    @Published var homeAwaySelection = "All"
     @Published var homeAwaySent = "All"
-    var appVersion = "Ver. 0.3.4"
+    var appVersion = "Ver. 0.3.5"
     var pixelArrayBytes = 18  // number of 16-bit values in this array
     var featuresArrayBytes = 14  // number of 8-bit values in this array
     var screenPixel : Bool = false  // tells the device if it is screen or surface
@@ -99,6 +100,7 @@ public class WebSocketController: ObservableObject {
     @Published public var displayTagline: String
     @Published public var homeAwayHide: Bool
     @Published public var seatNumberEditHide: Bool
+    @Published var homeAwaySelection = "All"
 
 // CUT-PASTE from KrowdKinect End 1 #############################################################
 
@@ -114,6 +116,7 @@ public class WebSocketController: ObservableObject {
             self.displayTagline = options.displayTagline
             self.homeAwayHide = options.homeAwayHide
             self.seatNumberEditHide = options.seatNumberEditHide
+        self.homeAwaySelection = options.homeAwaySelection
             setupScreenBrightness()
         } // end Init
     
@@ -125,6 +128,7 @@ public class WebSocketController: ObservableObject {
            self.displayTagline = options.displayTagline
            self.homeAwayHide = options.homeAwayHide
            self.seatNumberEditHide = options.seatNumberEditHide
+           self.homeAwaySelection = options.homeAwaySelection
        }
 
     deinit {
