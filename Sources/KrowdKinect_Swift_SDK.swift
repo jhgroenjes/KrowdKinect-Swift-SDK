@@ -21,15 +21,15 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-        
+
         guard let options = self.options else { return }
         let contentView = ContentView(options: options)  // Pass host app options to ContentView
         let hostingController = UIHostingController(rootView: contentView)
-        
+
         addChild(hostingController)
         view.addSubview(hostingController.view)
         hostingController.didMove(toParent: self)
-        
+
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
@@ -42,16 +42,27 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
         let closeButton = UIButton(type: .system)
         closeButton.setTitle("X", for: .normal)
         closeButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 24)
-        closeButton.setTitleColor(.black, for: .normal)  // Customize the color if needed
-        closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+        closeButton.setTitleColor(.black, for: .normal)  // Set the color of "X"
+        
+        // Set up circular white background
+        closeButton.backgroundColor = .white
+        closeButton.layer.cornerRadius = 20
+        closeButton.layer.masksToBounds = true
+        
+        // Adjust size to create padding around the "X"
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(closeButton)
         
         // Position the close button in the upper-right corner
         NSLayoutConstraint.activate([
             closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            closeButton.widthAnchor.constraint(equalToConstant: 40),  // Width for the circular button
+            closeButton.heightAnchor.constraint(equalToConstant: 40)  // Height for the circular button
         ])
+        
+        // Add action to close button
+        closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
         
         // Set the presentation controller delegate
         self.presentationController?.delegate = self
