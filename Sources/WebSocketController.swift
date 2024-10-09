@@ -163,27 +163,37 @@ public class WebSocketController: ObservableObject {
     
     // SAME AS KrowdKinect iOS
     func connectToAbly() {
-        setAPIKey(self.apiKey)  // set with the api key passed from the parent
-        guard let ably = ably, channel == nil else {
-            print ("Already connected to KrowdKinect Service")
-            // Already connected or ably is not set
-            return
-        }
-        //print ("connecitng to Websockets server")
-        ably.connection.on { [weak self] stateChange in
-            guard let self = self else { return }
-            switch stateChange.current {
-            case .connected:
-                self.online = true
-                print("Connected to KrowdKinect Cloud Services!")
-            case .failed:
-                print("Failed to connect to KrowdKinect Service!")
-            default:
-                break
+        do {
+            // Assuming `ably` is initialized using a method that can throw errors
+            setAPIKey(self.apiKey)  // Set the API key passed from the parent
+            
+            guard let ably = ably, channel == nil else {
+                print("Already connected to KrowdKinect Service")
+                return
             }
-            setupReceiveHandler()
+            
+            // Set up connection handler with error handling
+            ably.connection.on { [weak self] stateChange in
+                guard let self = self else { return }
+                switch stateChange.current {
+                case .connected:
+                    self.online = true
+                    print("Connected to KrowdKinect Cloud Services!")
+                case .failed:
+                    print("Failed to connect to KrowdKinect Service!")
+                    // Optionally, report this failure back to the host app or handle gracefully
+                    self.handleConnectionFailure()
+                default:
+                    break
+                }
+                self.setupReceiveHandler()
+            }
+        } catch let error {
+            print("Ably initialization error: \(error.localizedDescription)")
+            handleInitializationError(error)
         }
     }
+
 
     // SAME AS KrowdKinect iOS
     func disconnectFromAbly() {
