@@ -7,7 +7,6 @@
 import SwiftUI
 import UIKit
 
-
 public class FullScreenViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
     var options: KKOptions?
     
@@ -39,10 +38,20 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
             hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
 
-        // Add the triple-tap gesture recognizer
-        let tripleTap = UITapGestureRecognizer(target: self, action: #selector(tripleTapped))
-        tripleTap.numberOfTapsRequired = 3
-        view.addGestureRecognizer(tripleTap)
+        // Create and add the close button (X) in the upper-right corner
+        let closeButton = UIButton(type: .system)
+        closeButton.setTitle("X", for: .normal)
+        closeButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 24)
+        closeButton.setTitleColor(.black, for: .normal)  // Customize the color if needed
+        closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(closeButton)
+        
+        // Position the close button in the upper-right corner
+        NSLayoutConstraint.activate([
+            closeButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            closeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+        ])
         
         // Set the presentation controller delegate
         self.presentationController?.delegate = self
@@ -56,7 +65,8 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
         return false
     }
     
-    @objc private func tripleTapped() {
+    // Close button action
+    @objc private func closeButtonTapped() {
         presentExitConfirmation()
     }
     
