@@ -194,6 +194,17 @@ public class WebSocketController: ObservableObject {
         }
     }
 
+    // Specific to SDK - error handling
+    func handleConnectionFailure() {
+        // Handle the connection failure (e.g., retry logic, alert user, etc.)
+        print("Handle connection failure, notify the host app if needed")
+    }
+
+    func handleInitializationError(_ error: Error) {
+        // Handle initialization error (e.g., log the error, notify the host app)
+        print("Initialization failed with error: \(error.localizedDescription)")
+    }
+
 
     // SAME AS KrowdKinect iOS
     func disconnectFromAbly() {
