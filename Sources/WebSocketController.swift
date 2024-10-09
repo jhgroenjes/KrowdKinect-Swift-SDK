@@ -163,7 +163,11 @@ public class WebSocketController: ObservableObject {
     
     // SAME AS KrowdKinect iOS
     func connectToAbly() {
-        // Since no errors are thrown, no need for `do/catch`
+        //check validity of apiKey format
+        if isValidApiKey(options.apiKey) {
+            // Proceed with Ably initialization
+        } else {
+            
         setAPIKey(self.apiKey)  // Set the API key passed from the parent
 
         guard let ably = ably, channel == nil else {
@@ -186,6 +190,9 @@ public class WebSocketController: ObservableObject {
             }
             self.setupReceiveHandler()
         }
+        // Handle invalid API key (e.g., show an error message or log it)
+              print("Invalid API key format")
+        } // end else
     }
 
 
@@ -194,6 +201,17 @@ public class WebSocketController: ObservableObject {
         // Handle the connection failure (e.g., retry logic, alert user, etc.)
         print("Handle connection failure, notify the host app if needed")
     }
+    
+    func isValidApiKey(_ apiKey: String) -> Bool {
+        // Define the pattern for the key: 7 characters, followed by a colon, followed by 8 characters
+        let apiKeyPattern = "^[A-Za-z0-9]{7}:[A-Za-z0-9]{8}$"
+        let regex = try? NSRegularExpression(pattern: apiKeyPattern)
+        let range = NSRange(location: 0, length: apiKey.utf16.count)
+        
+        // Check if the apiKey matches the pattern
+        return regex?.firstMatch(in: apiKey, options: [], range: range) != nil
+    }
+
 
 
     // SAME AS KrowdKinect iOS
