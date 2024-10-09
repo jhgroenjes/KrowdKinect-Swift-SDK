@@ -163,46 +163,36 @@ public class WebSocketController: ObservableObject {
     
     // SAME AS KrowdKinect iOS
     func connectToAbly() {
-        do {
-            // Assuming `ably` is initialized using a method that can throw errors
-            setAPIKey(self.apiKey)  // Set the API key passed from the parent
-            
-            guard let ably = ably, channel == nil else {
-                print("Already connected to KrowdKinect Service")
-                return
+        // Since no errors are thrown, no need for `do/catch`
+        setAPIKey(self.apiKey)  // Set the API key passed from the parent
+
+        guard let ably = ably, channel == nil else {
+            print("Already connected to KrowdKinect Service")
+            return
+        }
+        
+        // Set up connection handler with error handling inside the callback
+        ably.connection.on { [weak self] stateChange in
+            guard let self = self else { return }
+            switch stateChange.current {
+            case .connected:
+                self.online = true
+                print("Connected to KrowdKinect Cloud Services!")
+            case .failed:
+                print("Failed to connect to KrowdKinect Service!")
+                self.handleConnectionFailure()
+            default:
+                break
             }
-            
-            // Set up connection handler with error handling
-            ably.connection.on { [weak self] stateChange in
-                guard let self = self else { return }
-                switch stateChange.current {
-                case .connected:
-                    self.online = true
-                    print("Connected to KrowdKinect Cloud Services!")
-                case .failed:
-                    print("Failed to connect to KrowdKinect Service!")
-                    // Optionally, report this failure back to the host app or handle gracefully
-                    self.handleConnectionFailure()
-                default:
-                    break
-                }
-                self.setupReceiveHandler()
-            }
-        } catch let error {
-            print("Ably initialization error: \(error.localizedDescription)")
-            handleInitializationError(error)
+            self.setupReceiveHandler()
         }
     }
+
 
     // Specific to SDK - error handling
     func handleConnectionFailure() {
         // Handle the connection failure (e.g., retry logic, alert user, etc.)
         print("Handle connection failure, notify the host app if needed")
-    }
-
-    func handleInitializationError(_ error: Error) {
-        // Handle initialization error (e.g., log the error, notify the host app)
-        print("Initialization failed with error: \(error.localizedDescription)")
     }
 
 
