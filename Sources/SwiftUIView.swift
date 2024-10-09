@@ -15,7 +15,7 @@ struct ContentView: View {
     @State private var seatNumber: String = "1"
 
 
-    init(options: kkOptions) {
+    init(options: KKOptions) {
         _session = StateObject(wrappedValue: WebSocketController(options: options))
     }
 

@@ -10,7 +10,7 @@ import AVFoundation
 import Ably
 
 // setting up the struct that will contain all the var's that the Host app can update
-public struct kkOptions {
+public struct KKOptions {
     public var apiKey: String?
     public var deviceID: UInt32
     public var displayName: String = "Default Name"
@@ -74,7 +74,7 @@ public class WebSocketController: ObservableObject {
     var vDevID : UInt32 = 0  // this is the deviceID used when this device is told to be part of the Screen (not surface)
     let homeAwayChoices = ["All", "Home", "Away"]
     @Published var homeAwaySent = "All"
-    var appVersion = "Ver. 0.3.5"
+    var appVersion = "Ver. 0.3.6"
     var pixelArrayBytes = 18  // number of 16-bit values in this array
     var featuresArrayBytes = 14  // number of 8-bit values in this array
     var screenPixel : Bool = false  // tells the device if it is screen or surface
@@ -109,7 +109,7 @@ public class WebSocketController: ObservableObject {
 //  #################  Code Unique to the SDK - done differently in KrowdKinect iOS Start #######
 //  #############################################################################################
 
-    public init(options: kkOptions) {
+    public init(options: KKOptions) {
             self.apiKey = options.apiKey ?? "Hf3iUg.5U0Azw:vnbLv80uvD3yJjT0Sgwb2ECgFCSXHAXQomrJOvwp-qk"  //Public-use Ably Key for testing
             self.deviceID = options.deviceID
             self.displayName = options.displayName
@@ -121,7 +121,7 @@ public class WebSocketController: ObservableObject {
         } // end Init
     
        // Method to update options if needed after initialization
-       func updateOptions(with options: kkOptions) {
+       func updateOptions(with options: KKOptions) {
            self.apiKey = options.apiKey ?? self.apiKey
            self.deviceID = options.deviceID
            self.displayName = options.displayName

@@ -9,9 +9,9 @@ import UIKit
 
 
 public class FullScreenViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
-    var options: kkOptions?
+    var options: KKOptions?
     
-    public init(options: kkOptions) {
+    public init(options: KKOptions) {
         self.options = options
         super.init(nibName: nil, bundle: nil)
     }
@@ -89,7 +89,7 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
 
 public class KrowdKinectSDK {
    
-    public static func launch(from viewController: UIViewController, with options: kkOptions) {
+    public static func launch(from viewController: UIViewController, with options: KKOptions) {
         let fullScreenVC = FullScreenViewController(options: options)
         fullScreenVC.modalPresentationStyle = .fullScreen
         viewController.present(fullScreenVC, animated: true, completion: nil)
