@@ -130,9 +130,27 @@ public class WebSocketController: ObservableObject {
            self.seatNumberEditHide = options.seatNumberEditHide
            self.homeAwaySelection = options.homeAwaySelection
        }
+    
+    func stopAllTimers() {
+        if let timer = self.timerBright {
+            timer.invalidate()
+            self.timerBright = nil // Clean up the reference
+        }
+        if let timer = self.timerColor {
+            timer.invalidate()
+            self.timerColor = nil // Clean up the reference
+        }
+        if let timer = self.timerCandle {
+            timer.invalidate()
+            self.timerCandle = nil // Clean up the reference
+        }
+        // Add similar logic for other timers if you have more
+    }
 
     deinit {
         disconnectFromAbly()
+        stopAllTimers()
+        
     }
     
     func viewWillDisappear() {

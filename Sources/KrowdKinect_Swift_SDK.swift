@@ -89,7 +89,6 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
         
         // Exit Action
         let exitAction = UIAlertAction(title: "Exit", style: .destructive) { _ in
-            stopAllTimers()    // ensure all timers are stopped before returning to HostApp
             self.dismiss(animated: true, completion: nil)
             //self.session.disconnectFromAbly()
             //print ("Ably connection closed via Exit button action")
@@ -104,23 +103,6 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
     // Disable the down-swipe gesture to dismiss the view
     public func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
         return false
-    }
-    
-    
-    public func stopAllTimers() {
-        if let timer = self.timerBright {
-            timer.invalidate()
-            self.timerBright = nil // Clean up the reference
-        }
-        if let timer = self.timerColor {
-            timer.invalidate()
-            self.timerColor = nil // Clean up the reference
-        }
-        if let timer = self.timerCandle {
-            timer.invalidate()
-            self.timerCandle = nil // Clean up the reference
-        }
-        // Add similar logic for other timers if you have more
     }
     
 }
