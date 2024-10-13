@@ -106,7 +106,8 @@ struct ContentView: View {
                     } // end If homeAwayHide
                     
                 } // end Stack
-                .padding([.leading, .trailing, .top], 15)
+                .padding([.leading, .top], 15)
+                .padding([.trailing], 68)
                 
                 Spacer() // Pushes the middle content to the center
                 

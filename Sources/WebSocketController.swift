@@ -22,7 +22,7 @@ public struct KKOptions {
     public init(apiKey: String? = nil,
                 deviceID: UInt32 = 1,
                 displayName: String = "",
-                displayTagline: String = "Triple-Tap to Exit",
+                displayTagline: String = "",
                 homeAwayHide: Bool = true,
                 seatNumberEditHide: Bool = true,
                 homeAwaySelection: String = "All") {
