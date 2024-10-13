@@ -9,6 +9,7 @@ import UIKit
 
 public class FullScreenViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
     var options: KKOptions?
+   
     
     public init(options: KKOptions) {
         self.options = options
@@ -94,6 +95,8 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
             //print ("Ably connection closed via Exit button action")
         }
         
+        
+        
         alertController.addAction(cancelAction)
         alertController.addAction(exitAction)
         
@@ -104,6 +107,8 @@ public class FullScreenViewController: UIViewController, UIAdaptivePresentationC
     public func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
         return false
     }
+    
+   
     
 }
 

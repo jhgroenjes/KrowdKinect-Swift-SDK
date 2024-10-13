@@ -138,10 +138,13 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onDisappear {
             session.disconnectFromAbly()
+            session.stopAllTimers()
+            session.resetBrightness()
         }
         .onAppear {
             // This starts the connection as soon as the sdk view loads.
             session.connectToAbly()
+            
         }
     } // end Body View
 } // end struct

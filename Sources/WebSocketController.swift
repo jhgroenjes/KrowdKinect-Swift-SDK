@@ -74,7 +74,7 @@ public class WebSocketController: ObservableObject {
     var vDevID : UInt32 = 0  // this is the deviceID used when this device is told to be part of the Screen (not surface)
     let homeAwayChoices = ["All", "Home", "Away"]
     @Published var homeAwaySent = "All"
-    var appVersion = "Ver. 0.3.6"
+    var appVersion = "Ver. 0.4.0"
     var pixelArrayBytes = 18  // number of 16-bit values in this array
     var featuresArrayBytes = 14  // number of 8-bit values in this array
     var screenPixel : Bool = false  // tells the device if it is screen or surface
@@ -131,26 +131,31 @@ public class WebSocketController: ObservableObject {
            self.homeAwaySelection = options.homeAwaySelection
        }
     
-    func stopAllTimers() {
-        if let timer = self.timerBright {
-            timer.invalidate()
-            self.timerBright = nil // Clean up the reference
+        func stopAllTimers() {
+            if let timer = self.timerBright {
+                timer.invalidate()
+                self.timerBright = nil // Clean up the reference
+            }
+            if let timer = self.timerColor {
+                timer.invalidate()
+                self.timerColor = nil // Clean up the reference
+            }
+            if let timer = self.timerCandle {
+                timer.invalidate()
+                self.timerCandle = nil // Clean up the reference
+            }
+            // Add similar logic for other timers if you have more
         }
-        if let timer = self.timerColor {
-            timer.invalidate()
-            self.timerColor = nil // Clean up the reference
+    
+        func resetBrightness() {
+            DispatchQueue.main.async {
+                UIScreen.main.brightness = CGFloat(0.75)
         }
-        if let timer = self.timerCandle {
-            timer.invalidate()
-            self.timerCandle = nil // Clean up the reference
-        }
-        // Add similar logic for other timers if you have more
     }
 
     deinit {
         disconnectFromAbly()
-        stopAllTimers()
-        
+       
     }
     
     func viewWillDisappear() {
